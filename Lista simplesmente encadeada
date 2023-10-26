@@ -1,0 +1,121 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct no_
+{
+    int chave;
+    int valor;
+    struct no_ *prox;
+} no;
+
+void buscar(no *ptlista, no **ant, no **pont, int x){
+    no *ptr = ptlista->prox;
+    *pont = NULL;
+    *ant = ptlista;
+    while (ptr != NULL){
+        if (ptr->chave < x){
+            *ant = ptr;
+            ptr = ptr->prox;
+        }
+        else{
+            if (ptr->chave == x){
+                *pont = ptr;
+                ptr = NULL;
+            }
+            else
+            {
+                ptr = NULL;
+            }
+        }
+    }
+}
+
+int inserir (no *ptlista, no **ant, no **pont){
+    int chave, valor;
+    printf("\nDigite a chave e o valor que deseja inserir: ");
+    scanf(" %d", &chave);
+    scanf(" %d", &valor);
+    buscar (ptlista, ant, pont, chave);
+        if (*pont == NULL){
+            no *novo = malloc(sizeof(no));
+            novo->chave = chave;
+            novo->valor = valor;
+            novo->prox = (*ant)->prox;
+            (*ant)->prox = novo;
+            return 0;
+        }
+        printf("\nNão foi possível inserir. Chave já existente!");
+        return -1;
+    }
+
+no *remover (no *ptlista, no **ant, no **pont){
+    int chave;
+    printf("\nDigite a chave que deseja remover: ");
+    scanf(" %d", &chave);
+    buscar (ptlista, ant, pont, chave);
+    if (*pont != NULL){
+         (*ant)->prox = (*pont)->prox;
+        printf("\nElemento removido!");
+        return pont;
+        
+    } else {
+        printf("\nElemento inexistente!");
+        return NULL;
+    }
+}
+
+void imprimir (no *ptlista){
+    no *ptr = ptlista->prox;
+    if (ptr == NULL){
+        printf("\nLista vazia!");
+    } else {
+        printf("\n--Lista--\n");
+        while (ptr != NULL){
+        printf("\nChave: %d  Valor: %d", ptr->chave, ptr->valor);
+        ptr = ptr->prox;
+        }
+    }
+}
+
+void encerra_lista(no *ptlista){
+    no *ptr = ptlista->prox;
+    no *ant = ptlista;
+    while (ptr->prox != NULL){
+        free (ant);
+        ant = ptr;
+        ptr = ptr->prox;
+    }
+    free (ptr);
+    printf("\n\nMemória liberada!\n\n");
+}
+
+int main(){
+    no *ptlista = malloc(sizeof(no));
+    no **ant = malloc(sizeof(no));
+    no **pont = malloc(sizeof(no));
+    int menu = 0;
+
+    while (menu != 4){
+        printf("\n\n--------MENU--------\n1-Imprimir lista\n2-Inserir elemento\n3-Remover elemento\n4-Sair\n\n");
+        scanf(" %d", &menu);
+        switch (menu){
+            case 1:
+                imprimir(ptlista);
+                break;
+            case 2:
+                inserir(ptlista, ant, pont);
+                break;
+            case 3:
+                remover(ptlista, ant, pont);
+                break;
+            case 4:
+                break;
+            default:
+                printf("\n\tOpção inválida!");
+                break;
+        }
+    }
+    encerra_lista(ptlista);
+
+    return 0;
+}
