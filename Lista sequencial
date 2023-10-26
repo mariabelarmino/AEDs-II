@@ -1,0 +1,143 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+typedef struct no_{
+    int valor;
+    int chave;
+}no;
+
+int buscar (no A[], int tam, int x){
+    A[tam].chave = x; //ultima posição da lista recebe o valor procurado
+    int i = 0;
+    while(A[i].chave != x){ //procura na lista o valor
+        i++;
+    }
+    if(i != tam){ //se achar o valor no meio da lista, retorna a posição
+        return i;
+    }
+    return -1; //achou no final da lista, ou seja, não está presente na lista
+}
+
+int inserir (no A[], int n, int tam, no novo){
+    if(n < tam){
+        if(buscar (A, n, novo.chave) == -1){ //testar se já existe esse valor na lista
+            A[n].chave = novo.chave;
+            A[n].valor = novo.valor;
+            return n + 1;
+        }
+        return 0; //dizer que já existe esse valor na lista
+    }
+    return -1; //dizer que a lista está cheia, logo, não foi possível inserir o novo valor
+}
+
+//seta só pode ser usada para uma struct: (*nome). == nome->
+
+//essa função vai retornar o endereço do nó removido
+no* remover(no A[], int x, int *tam){
+    no* retorno = NULL; //declara uma struct vazia com nome retorno
+    if(tam != 0){ //verifica se a lista não está vazia
+        int indice = buscar (A, *tam, x); 
+        if(indice >= 0){ //descobre se o valor procurado está na lista
+            retorno = malloc(sizeof(no)); //aloca um espaço da memória do tamanho de um nó
+            retorno->chave = A[indice].chave; 
+            retorno->valor = A[indice].valor;
+
+            for(int i = indice; i < ((*tam) - 1); i++){ //deixa o valor a ser removido por último
+                A[i].chave = A[i + 1].chave;
+                A[i].valor = A[i + 1].valor;
+            }
+            *tam = (*tam) - 1; //remove o item
+        }    
+    }
+    return retorno;
+}
+
+void imprimir(no L[], int n){
+    if(!n){ //if n == NULL
+        printf("\n\tLista vazia!\n\n");
+    }
+    for(int i = 0; i < n; i++){
+        printf("%d: %d\n", L[i].chave, L[i].valor);
+        printf("=========\n");
+    }
+}
+
+//========================não é importante==========================
+
+
+void ler_menu(int * resposta){
+    printf("\n-----------------------\n");
+    printf("escolha uma das opcoes:\n");
+    printf("0 - sair\n");
+    printf("1 - inserir\n");
+    printf("2 - remover\n");
+    printf("3 - imprimir\n");
+    scanf("%d", resposta);
+    printf("-----------------------\n\n");
+}
+
+void ler_no(no * novo_no){
+    printf("informe a chave: ");
+    scanf("%d", &(*novo_no).chave);
+    printf("informe o valor: ");
+    scanf("%d", &(*novo_no).valor);
+    printf("\n");
+}
+
+
+//===============================================================
+
+void main(){
+    int m;//tamanho maximo da lista
+    int n = 0;//tamanho atual da lista
+    int resposta = 1;//resposta do usuario p/ as opcoes
+
+    printf("informe o tamanho desejado p/ a lista: ");
+    scanf("%d", &m);
+    //estamos declarando o vetor com tamanho m + 1
+    //porque a funcao busca utiliza a posicao m + 1 vazia
+    no L[m + 1];
+
+    while(resposta != 0){
+        ler_menu(&resposta);
+
+        if(resposta == 0){
+            //sair
+            return ;
+        } if(resposta == 1){
+            //inserir
+            no novo_no;
+            ler_no(&novo_no);
+            int valor_retornado = inserir (L, n, m, novo_no);
+            if(valor_retornado == -1){
+                printf("lista cheia\n");
+            }else if(valor_retornado == 0){
+                printf("elemento ja existente\n");
+            }else{
+                n = valor_retornado;
+                printf("elemento inserido\ntamanho da lista: %d\n",n);
+            }
+        } else if(resposta == 2){
+            //remover
+            int chave;
+            printf("informe a chave a remover: ");
+            scanf("%d", &chave);
+
+            no * no_removido = remover(chave, L, &n);
+            if(no_removido != NULL){
+                printf("conteudo do no removido:\n");
+                printf("%d: %d\n",(*no_removido).chave, (*no_removido).valor);
+                printf("tamanho da lista: %d\n", n);
+                free(no_removido);
+            }else{
+                printf("elemento inexistente\n");
+            }
+        }else if(resposta == 3){
+            //imprimir
+            imprimir(L, n);
+        }else {
+            printf("Opcao invalida\n");
+        }
+    }
+}
