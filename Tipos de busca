@@ -1,0 +1,66 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct dados_
+{
+    int chave;
+    int valor;
+} dados;
+
+int buscar(dados A[], int x, int tam)
+{
+    for (int i = 0; i < tam; i++)
+    {
+        if (A[i].valor == x)
+        {
+            return i;
+        }
+    }
+    return -1;
+}
+
+int buscar_ord(dados A[], int x, int tam)
+{
+    for (int i = 0; A[i].valor <= x; i++)
+    {
+        if (A[i].valor == x)
+        {
+            return i;
+        }
+    }
+    return -1;
+}
+
+int busca_bin(dados A[], int x, int tam){
+    int inicio = 0, fim = tam - 1, meio;
+    while (inicio <= fim){
+        meio = (inicio + fim) / 2;
+        if (A[meio].valor == x){
+            return meio;
+            inicio = fim + 1; //acionar a condição de parada
+        } else if (A[meio].valor < x){
+            inicio = meio + 1; //valor meior que meio
+        } else fim = meio - 1; //valor menor que o meio
+    }
+    return -1;
+}
+
+int main()
+{
+    dados A[6];
+    A[0].valor = 10;
+    A[1].valor = 20;
+    A[2].valor = 30;
+    A[3].valor = 40;
+    A[4].valor = 50;
+    A[5].valor = 60;
+
+    int retorno = busca_bin(A, 10, 6);
+    if(retorno == -1){
+        printf("Valor nao encontrado.\n\n");
+    }else{
+    printf("Valor encontrado no indice %d.\n\n", retorno);
+    }
+
+    return 0;
+}
